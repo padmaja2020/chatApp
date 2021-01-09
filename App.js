@@ -1,20 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 
-import { BackHandler, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, StyleSheet, Text, View, Button} from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import { FlatList } from 'react-native-gesture-handler';
+
 
 
 const Stack = createStackNavigator();
 
+
 export default class App extends Component {
+  constructor(props){
+
+    super();
+    this.state = {
+      lists: [],
+      uid: 0,
+      loggedInText: 'Please wait, you are getting logged in',
+    };
+  }
+ 
+
+ 
   render(){
   return (
-     
+
       <NavigationContainer>
       <Stack.Navigator initialRouteName = 'Start'>
       <Stack.Screen name = 'Start' component = {Start}/>
@@ -37,3 +52,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+
+
+
+
