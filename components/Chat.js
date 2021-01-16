@@ -1,9 +1,11 @@
 
 import React, { Component } from 'react';
 import {View, Button, Text, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
-import {GiftedChat, Bubble, InputToolbar} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble, InputToolbar, } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo'
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 const firebase = require('firebase');
 require('firebase/firestore');
 
@@ -64,7 +66,9 @@ export default class Chat extends Component{
                 _id:data._id,
                 text:data.text,
                 createdAt:data.createdAt.toDate(),
-                user:data.user
+                user:data.user,
+                image:data.image || '',
+                location: data.location || null,
             });
 
         });
@@ -73,30 +77,8 @@ export default class Chat extends Component{
         });
     };
 
-    // async getMessages(){
-    //     let messages = '';
+    
 
-    //     try{
-    //         messages = await AsyncStorage.getItem('messages') || [];
-    //         this.setState({
-    //             messages: JSON.parse(messages)
-    //         });
-    //     }catch(error){
-    //         console.log(error.message);
-    //     }
-    // };
-
-    // async getMessages() {
-    //   let messages = '';
-    //   try {
-    //     messages = await AsyncStorage.getItem('messages') || [];
-    //     this.setState({
-    //       messages: JSON.parse(messages)
-    //     });
-    //   } catch (error) {
-    //     console.log(error.message);
-    //   }
-    // };
 
     getMessages = async () => {
       let messages = '';
@@ -139,6 +121,8 @@ export default class Chat extends Component{
         createdAt: this.state.messages[0].createdAt,
         user: this.state.user,
         uid: this.state.uid,
+        image: this.state.messages[0].image || '',
+        location: this.state.messages[0].location || null,
         })
     }
     
@@ -195,6 +179,7 @@ export default class Chat extends Component{
 
 
     onSend(messages=[]){
+   
 
         this.setState(previousState=>({
 
@@ -241,6 +226,49 @@ export default class Chat extends Component{
         }
     
       }
+
+      renderCustomView (props) {
+        const { currentMessage} = props;
+        if (currentMessage.location) {
+          return (
+
+            <View>
+          <MapView
+            style={{
+              width: 150, height: 100, borderRadius: 13, margin: 3,
+            }}
+          
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+        </View>
+              // <MapView
+              //   style={{width: 150,
+              //     height: 100,
+              //     borderRadius: 13,
+              //     margin: 3}}
+              //   region={{
+              //     latitude: currentMessage.location.latitude,
+              //     longitude: currentMessage.location.longitude,
+              //     latitudeDelta: 0.0922,
+              //     longitudeDelta: 0.0421,
+              //   }}
+              // />
+          );
+        }
+        return null;
+      }
+
+
+      renderCustomActions = (props) => {
+        return <CustomActions {...props} />;
+      };
+
+
     render(){
 
         return(
@@ -249,6 +277,8 @@ export default class Chat extends Component{
                  
                   renderBubble={this.renderBubble.bind(this)}
                   renderInputToolbar = {this.renderInputToolbar.bind(this)}
+                  renderCustomView = {this.renderCustomView.bind(this)}
+                  renderActions = {this.renderCustomActions.bind(this)}
                     messages= {this.state.messages}
                     onSend ={messages=> this.onSend(messages)}
                     user={this.state.user}
