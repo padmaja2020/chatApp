@@ -20,46 +20,63 @@ export default class CustomActions extends Component{
   pickImage = async()=>{
    
     const {status} =await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    if (status === 'granted'){
+    try{
+      if (status === 'granted'){
 
-      let result = await ImagePicker.launchImageLibraryAsync({mediaTypes:'Images'}).catch(error =>console.log(error));
-      if(!result.cancelled){
-     
-       const imageUrl= await  this.upLoadImage(result.uri);
-     
-       this.props.onSend({image:imageUrl});
-     
+        let result = await ImagePicker.launchImageLibraryAsync({mediaTypes:'Images'}).catch(error =>console.log(error));
+        if(!result.cancelled){
+       
+         const imageUrl= await  this.upLoadImage(result.uri);
+       
+         this.props.onSend({image:imageUrl});
+       
+        }
       }
-    }
-  
 
+    }catch (error) {
+      console.log(error.message);
+
+    }
+   
   }
 
   takePhoto = async() =>{
     const {status} = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-    if (status === 'granted'){
-      let result = await ImagePicker.launchCameraAsync({mediaTypes:'Images'}).catch(error => console.log(error)); 
-      if(!result.cancelled){
-        const imageUrl= await  this.upLoadImage(result.uri);
-     
-        this.props.onSend({image:imageUrl});
+    try{
+      if (status === 'granted'){
+        let result = await ImagePicker.launchCameraAsync({mediaTypes:'Images'}).catch(error => console.log(error)); 
+        if(!result.cancelled){
+          const imageUrl= await  this.upLoadImage(result.uri);
+       
+          this.props.onSend({image:imageUrl});
+        }
       }
+
+    }catch(error){
+      console.log(error.message);
     }
+    
   }
 
   getLocation = async() =>{
     const {status} = await Permissions.askAsync(Permissions.LOCATION);
-    if (status === 'granted'){
-      let result = await Location.getCurrentPositionAsync({});
-      if (result){
-        this.props.onSend({
-          location:{
-            longitude: result.coords.longitude,
-            latitude: result.coords.latitude,
-          }
-        })
+    try{
+      if (status === 'granted'){
+        let result = await Location.getCurrentPositionAsync({});
+        if (result){
+          this.props.onSend({
+            location:{
+              longitude: result.coords.longitude,
+              latitude: result.coords.latitude,
+            }
+          })
+        }
       }
+
+    }catch(error){
+      console.log(error.message);
     }
+    
 
   }
   upLoadImage = async(uri)=>{
