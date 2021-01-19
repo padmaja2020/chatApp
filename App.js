@@ -5,12 +5,14 @@ import { BackHandler, StyleSheet, Text, View, Button} from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
 import 'react-native-gesture-handler';
+//import react navigation
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+
 import { FlatList } from 'react-native-gesture-handler';
 
 
-
+// create the navigator
 const Stack = createStackNavigator();
 
 
